@@ -19,3 +19,4 @@ Notes:
 - Function based  View
 - API_VIEW based function View
 - Class based View
+- Generic View & Mixins
