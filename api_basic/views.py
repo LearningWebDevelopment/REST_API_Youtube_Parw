@@ -1,4 +1,3 @@
-from functools import partial
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from rest_framework.parsers import JSONParser
@@ -18,10 +17,27 @@ from django.shortcuts import get_object_or_404
 from .models import Article
 from .serializers import ArticleSerializer
 
-class ArticleGenericViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+
+class ArticleModelViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
     
+    def partial_update(self, request, pk=None):
+        
+        #print(request.data['title'])
+        request.data['title'] = request.data['title'].title()
+        article = Article.objects.get(pk=pk)
+        serializer = ArticleSerializer(article, data=request.data)
+        
+        
+        #print("I'm Here!!!!!!!")
+        return self.update(request)
+
+
+class ArticleGenericViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    serializer_class = ArticleSerializer
+    queryset = Article.objects.all()
+
     def partial_update(self, request, pk=None):
         #print("I'm Here!!!!!!!")
         return self.update(request)
@@ -29,7 +45,7 @@ class ArticleGenericViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixi
 
 class ArticleViewSet(viewsets.ViewSet):
     serializer_class = ArticleSerializer
-    
+
     def list(self, request):
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)
@@ -60,17 +76,17 @@ class ArticleViewSet(viewsets.ViewSet):
 
     def partial_update(self, request, pk=None):
         article = Article.objects.get(pk=pk)
-        serializer = ArticleSerializer(article, data=request.data, partial=True)
+        serializer = ArticleSerializer(
+            article, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-    
+
     def destroy(self, request, pk=None):
         article = Article.objects.get(pk=pk)
         article.delete()
         return Response(status=HTTP_204_NO_CONTENT)
-        
 
 
 class GenericAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
