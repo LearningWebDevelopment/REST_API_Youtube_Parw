@@ -20,6 +20,7 @@ Notes:
 - API_VIEW based function View
 - Class based View
 - Generic View & Mixins
+- Viewset
 
 ## Authentication  
 
