@@ -24,3 +24,6 @@ Notes:
 ## Authentication  
 
 - Basic & Session Authentication
+- Token Authentication  
+  - Header Authorization : Token key
+  
