@@ -18,10 +18,18 @@ from django.shortcuts import get_object_or_404
 from .models import Article
 from .serializers import ArticleSerializer
 
+class ArticleGenericViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    serializer_class = ArticleSerializer
+    queryset = Article.objects.all()
+    
+    def partial_update(self, request, pk=None):
+        #print("I'm Here!!!!!!!")
+        return self.update(request)
+
 
 class ArticleViewSet(viewsets.ViewSet):
     serializer_class = ArticleSerializer
-    #queryset = Article.objects.all()
+    
     def list(self, request):
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)

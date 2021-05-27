@@ -21,6 +21,7 @@ Notes:
 - Class based View
 - Generic View & Mixins
 - Viewset
+- Generic ViewSet
 
 ## Authentication  
 
